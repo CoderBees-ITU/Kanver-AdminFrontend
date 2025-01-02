@@ -1,31 +1,95 @@
-import { Card } from '@/components/ui/card'
-import AuthLayout from '../auth-layout'
-import { UserAuthForm } from './components/user-auth-form'
+import { useState } from 'react';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
+import { auth } from '@/lib/firebaseConfig'; // Adjust the path to your Firebase config
+import { Card } from '@/components/ui/card';
+import AuthLayout from '../auth-layout';
 
 export default function SignIn() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleLogin = async (e: { preventDefault: () => void }) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+
+    try {
+      // Authenticate with Firebase
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+
+      // Check if the user is an admin based on their UID
+      if (userCredential.user.uid === 'xb1ZIo3Fbtfz1f4itvGC7FZpC652') {
+        // Set an admin cookie
+        document.cookie = `adminToken=xb1ZIo3Fbtfz1f4itvGC7FZpC652; path=/; secure; samesite=strict`;
+
+        // Redirect to the admin dashboard
+        window.location.href = '/'; // Adjust this route as necessary
+      } else {
+        setError('Access denied: You are not an admin.');
+      }
+
+      /* eslint-disable no-console */
+      console.log('Logged in as:', userCredential.user);
+      /* eslint-enable no-console */
+    } catch (error) {
+      setError('Failed to log in. Please check your credentials.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <AuthLayout>
-      <Card className='p-6'>
-        <div className='flex flex-col space-y-2 text-left'>
-          <h1 className='text-2xl font-semibold tracking-tight'>Login</h1>
-          <p className='text-sm text-muted-foreground'>
+      <Card className="p-6">
+        <div className="flex flex-col space-y-2 text-left">
+          <h1 className="text-2xl font-semibold tracking-tight">Login</h1>
+          <p className="text-sm text-muted-foreground">
             Enter your email and password below <br />
             to log into your account
           </p>
         </div>
-        <UserAuthForm />
-        <p className='mt-4 px-8 text-center text-sm text-muted-foreground'>
+        <form onSubmit={handleLogin} className="flex flex-col space-y-4">
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="input"
+            required
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="input"
+            required
+          />
+          {error && <p className="text-red-500 text-sm">{error}</p>}
+          <button
+            type="submit"
+            className="btn btn-primary"
+            disabled={loading}
+          >
+            {loading ? 'Logging in...' : 'Login'}
+          </button>
+        </form>
+        <p className="mt-4 px-8 text-center text-sm text-muted-foreground">
           By clicking login, you agree to our{' '}
           <a
-            href='/terms'
-            className='underline underline-offset-4 hover:text-primary'
+            href="/terms"
+            className="underline underline-offset-4 hover:text-primary"
           >
             Terms of Service
           </a>{' '}
           and{' '}
           <a
-            href='/privacy'
-            className='underline underline-offset-4 hover:text-primary'
+            href="/privacy"
+            className="underline underline-offset-4 hover:text-primary"
           >
             Privacy Policy
           </a>
@@ -33,5 +97,5 @@ export default function SignIn() {
         </p>
       </Card>
     </AuthLayout>
-  )
+  );
 }
