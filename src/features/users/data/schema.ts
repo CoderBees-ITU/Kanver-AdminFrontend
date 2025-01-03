@@ -1,32 +1,35 @@
-import { z } from 'zod'
+import { z } from 'zod';
 
-const userStatusSchema = z.union([
-  z.literal('active'),
-  z.literal('inactive'),
-  z.literal('invited'),
-  z.literal('suspended'),
-])
-export type UserStatus = z.infer<typeof userStatusSchema>
+// Define the schema for a single User
+export const userSchema = z.object({
+  Birth_Date: z.string().transform((date) => new Date(date)), // Transform to Date object
+  Blood_Type: z.string(), // Blood type as string (e.g., "A+")
+  City: z.string(), // City name
+  District: z.string(), // District name
+  Email: z.string().email(), // Validate email format
+  Is_Eligible: z.number().refine((val) => val === 1 || val === 0, {
+    message: 'Is_Eligible must be 1 or 0',
+  }).transform((val) => val === 1), // Transform to boolean
+  Last_Donation_Date: z.string().nullable().transform((date) => (date ? new Date(date) : null)), // Nullable Date
+  Name: z.string(), // First name
+  Surname: z.string(), // Last name
+  TC_ID: z.number(), // Numeric ID
+  User_id: z.string(), // User ID as string
+});
 
-const userRoleSchema = z.union([
-  z.literal('superadmin'),
-  z.literal('admin'),
-  z.literal('cashier'),
-  z.literal('manager'),
-])
+// Define the schema for a list of Users
+export const userListSchema = z.array(userSchema);
 
-const userSchema = z.object({
-  id: z.string(),
-  firstName: z.string(),
-  lastName: z.string(),
-  username: z.string(),
-  email: z.string(),
-  phoneNumber: z.string(),
-  status: userStatusSchema,
-  role: userRoleSchema,
-  createdAt: z.coerce.date(),
-  updatedAt: z.coerce.date(),
-})
-export type User = z.infer<typeof userSchema>
-
-export const userListSchema = z.array(userSchema)
+// TypeScript interface for a single User
+export interface User {
+  id: string; // User ID
+  name: string; // First name
+  surname: string; // Last name
+  email: string; // Email address
+  city: string; // City
+  district: string; // District
+  bloodType: string; // Blood type
+  isEligible: boolean; // Eligibility status
+  birthDate: Date; // Birth date as Date object
+  lastDonationDate: Date | null; // Nullable last donation date
+}
