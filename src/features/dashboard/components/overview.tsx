@@ -1,81 +1,86 @@
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from 'recharts'
+import React from "react";
 
-const data = [
+// Example donation data
+const donations = [
   {
-    name: 'Jan',
-    total: Math.floor(Math.random() * 5000) + 1000,
+    id: 1,
+    openedDate: "2025-01-01",
+    location: "New York",
+    requestee: "John Doe",
+    bloodType: "A+",
   },
   {
-    name: 'Feb',
-    total: Math.floor(Math.random() * 5000) + 1000,
+    id: 2,
+    openedDate: "2025-01-02",
+    location: "Los Angeles",
+    requestee: "Jane Smith",
+    bloodType: "B-",
   },
   {
-    name: 'Mar',
-    total: Math.floor(Math.random() * 5000) + 1000,
+    id: 3,
+    openedDate: "2025-01-03",
+    location: "Chicago",
+    requestee: "Alice Brown",
+    bloodType: "O+",
   },
-  {
-    name: 'Apr',
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: 'May',
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: 'Jun',
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: 'Jul',
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: 'Aug',
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: 'Sep',
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: 'Oct',
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: 'Nov',
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: 'Dec',
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-]
+];
 
 export function Overview() {
+  const handleEdit = (id) => {
+    console.log("Edit donation with ID:", id);
+    // Add edit logic here
+  };
+
+  const handleDelete = (id) => {
+    console.log("Delete donation with ID:", id);
+    // Add delete logic here
+  };
+
   return (
-    <ResponsiveContainer width='100%' height={350}>
-      <BarChart data={data}>
-        <XAxis
-          dataKey='name'
-          stroke='#888888'
-          fontSize={12}
-          tickLine={false}
-          axisLine={false}
-        />
-        <YAxis
-          stroke='#888888'
-          fontSize={12}
-          tickLine={false}
-          axisLine={false}
-          tickFormatter={(value) => `$${value}`}
-        />
-        <Bar
-          dataKey='total'
-          fill='currentColor'
-          radius={[4, 4, 0, 0]}
-          className='fill-primary'
-        />
-      </BarChart>
-    </ResponsiveContainer>
-  )
+    <div className="overflow-x-auto">
+      <table className="min-w-full border-collapse border border-gray-300">
+        <thead className="bg-gray-100">
+        <tr>
+          <th className="border border-gray-300 px-4 py-2">Opened Date</th>
+          <th className="border border-gray-300 px-4 py-2">Location</th>
+          <th className="border border-gray-300 px-4 py-2">Requestee</th>
+          <th className="border border-gray-300 px-4 py-2">Blood Type</th>
+          <th className="border border-gray-300 px-4 py-2">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {donations.map((donation) => (
+          <tr key={donation.id} className="hover:bg-gray-50">
+            <td className="border border-gray-300 px-4 py-2">
+              {donation.openedDate}
+            </td>
+            <td className="border border-gray-300 px-4 py-2">
+              {donation.location}
+            </td>
+            <td className="border border-gray-300 px-4 py-2">
+              {donation.requestee}
+            </td>
+            <td className="border border-gray-300 px-4 py-2">
+              {donation.bloodType}
+            </td>
+            <td className="border border-gray-300 px-4 py-2">
+              <button
+                className="bg-blue-500 text-white px-2 py-1 rounded mr-2 hover:bg-blue-600"
+                onClick={() => handleEdit(donation.id)}
+              >
+                Edit
+              </button>
+              <button
+                className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
+                onClick={() => handleDelete(donation.id)}
+              >
+                Delete
+              </button>
+            </td>
+          </tr>
+        ))}
+        </tbody>
+      </table>
+    </div>
+  );
 }
