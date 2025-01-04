@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { getAuth } from 'firebase/auth'
 
 import pino from 'pino'
 const logger = pino()
@@ -24,10 +25,10 @@ export const BloodRequestService = {
 
   async deleteRequest(requestId: string) {
     try {
-      const response = await axios.delete(`${BASE_URL}/request`, {
+      const response = await axios.delete(`${BASE_URL}/admin_request/${requestId}`, {
         params: { request_id: requestId },
         headers: {
-          Authorization: 'iJFXvfpDakVUQ6iYWp0OMJfJv5z2',
+          Authorization: getAuth().currentUser?.uid,
         },
       })
       return response.data
@@ -37,22 +38,4 @@ export const BloodRequestService = {
     }
   },
 
-  async updateRequest(requestId: string, updateData: any) {
-    try {
-      const response = await axios.put(
-        `${BASE_URL}/request`,
-        { request_id: requestId, ...updateData },
-        {
-          headers: {
-            Authorization: 'iJFXvfpDakVUQ6iYWp0OMJfJv5z2',
-            'Content-Type': 'application/json',
-          },
-        }
-      )
-      return response.data
-    } catch (error) {
-      logger.error('Error updating request:', error)
-      throw error
-    }
-  },
 }

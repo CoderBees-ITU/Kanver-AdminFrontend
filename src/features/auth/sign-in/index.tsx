@@ -1,10 +1,12 @@
 import { useState } from 'react';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
 import { auth } from '@/lib/firebaseConfig'; // Adjust the path to your Firebase config
 import { Card } from '@/components/ui/card';
 import AuthLayout from '../auth-layout';
+import { Input } from '@/components/ui/input';
+import Cookies from 'js-cookie';
 
 export default function SignIn() {
   const [email, setEmail] = useState('');
@@ -22,20 +24,19 @@ export default function SignIn() {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
 
       // Check if the user is an admin based on their UID
-      if (userCredential.user.uid === 'xb1ZIo3Fbtfz1f4itvGC7FZpC652') {
-        // Set an admin cookie
-        document.cookie = `adminToken=xb1ZIo3Fbtfz1f4itvGC7FZpC652; path=/; secure; samesite=strict`;
+      if (userCredential.user.uid === 'QjfkPHy94WPNsHrR3IckSkXjEV42') {
+        Cookies.set('token', await userCredential.user.uid );
 
-        // Redirect to the admin dashboard
         window.location.href = '/'; // Adjust this route as necessary
       } else {
+        signOut(auth);
         setError('Access denied: You are not an admin.');
       }
 
       /* eslint-disable no-console */
       console.log('Logged in as:', userCredential.user);
       /* eslint-enable no-console */
-    } catch (error) {
+    } catch {
       setError('Failed to log in. Please check your credentials.');
     } finally {
       setLoading(false);
@@ -53,7 +54,7 @@ export default function SignIn() {
           </p>
         </div>
         <form onSubmit={handleLogin} className="flex flex-col space-y-4">
-          <input
+          <Input
             type="email"
             placeholder="Email"
             value={email}
@@ -61,7 +62,7 @@ export default function SignIn() {
             className="input"
             required
           />
-          <input
+          <Input
             type="password"
             placeholder="Password"
             value={password}

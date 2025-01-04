@@ -23,6 +23,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar'
+import { getAuth } from 'firebase/auth'
 
 export function NavUser({
   user,
@@ -102,8 +103,12 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <LogOut />
+            <DropdownMenuItem
+               onClick={() => {
+                getAuth().signOut()
+              }} >
+              <LogOut 
+           />
               Log out
             </DropdownMenuItem>
           </DropdownMenuContent>
