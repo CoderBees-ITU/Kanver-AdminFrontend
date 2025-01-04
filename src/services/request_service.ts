@@ -1,47 +1,57 @@
-import axios from 'axios';
+import axios from 'axios'
+
+import pino from 'pino'
+const logger = pino()
 
 
-const BASE_URL = "https://kanver-backend-93774604105.us-central1.run.app";
+const BASE_URL = 'https://kanver-backend-93774604105.us-central1.run.app'
 
 export const BloodRequestService = {
-  getRequests: async (p: {}) => {
-    const response = await axios.get(
-      'https://kanver-backend-93774604105.us-central1.run.app/request',
-      {
+  async getRequests() {
+    try {
+      const response = await axios.get(`${BASE_URL}/request?`, {
         headers: {
           Authorization: 'iJFXvfpDakVUQ6iYWp0OMJfJv5z2',
           'Content-Type': 'application/json',
         },
-      }
-    )
-    return response.data // Return the array of blood requests
-  },
-
-  async createRequest(requestData: any) {
-    try {
-      const response = await axios.post(`${BASE_URL}/request`, requestData, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'user-auth-token',
-        },
       })
       return response.data
     } catch (error) {
-      console.error('Error creating request:', error)
+      logger.error('Error fetching requests:', error)
       throw error
     }
   },
 
   async deleteRequest(requestId: string) {
     try {
-      const response = await axios.delete(`${BASE_URL}/request/${requestId}`, {
+      const response = await axios.delete(`${BASE_URL}/request`, {
+        params: { request_id: requestId },
         headers: {
-          Authorization: 'user-auth-token',
+          Authorization: 'iJFXvfpDakVUQ6iYWp0OMJfJv5z2',
         },
       })
       return response.data
     } catch (error) {
-      console.error('Error deleting request:', error)
+      logger.error('Error deleting request:', error)
+      throw error
+    }
+  },
+
+  async updateRequest(requestId: string, updateData: any) {
+    try {
+      const response = await axios.put(
+        `${BASE_URL}/request`,
+        { request_id: requestId, ...updateData },
+        {
+          headers: {
+            Authorization: 'iJFXvfpDakVUQ6iYWp0OMJfJv5z2',
+            'Content-Type': 'application/json',
+          },
+        }
+      )
+      return response.data
+    } catch (error) {
+      logger.error('Error updating request:', error)
       throw error
     }
   },
