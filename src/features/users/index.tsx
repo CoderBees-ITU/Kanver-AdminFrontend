@@ -4,7 +4,9 @@ import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
-import { columns } from './components/users-columns'
+import { fetchBannedUsers } from './api/userApis.ts'
+import { getColumns } from './components/users-columns'
+// Updated to use dynamic columns
 import { UsersDialogs } from './components/users-dialogs'
 import { UsersPrimaryButtons } from './components/users-primary-buttons'
 import { UsersTable } from './components/users-table'
@@ -14,24 +16,29 @@ import { fetchUsers } from './data/users'
 
 const Users = () => {
   const [userList, setUserList] = useState<User[]>([])
+  const [bannedUsers, setBannedUsers] = useState<string[]>([]) // State for banned users
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState<boolean>(true)
 
   useEffect(() => {
-    const loadUsers = async () => {
+    const loadUsersAndBannedStatus = async () => {
       try {
-        const users = await fetchUsers()
+        const [users, bannedIds] = await Promise.all([
+          fetchUsers(),
+          fetchBannedUsers(),
+        ])
         setUserList(users)
+        setBannedUsers(bannedIds)
         setError(null)
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (err) {
-        setError('Failed to load users. Please try again.')
+        setError('Failed to load data. Please try again.')
       } finally {
         setLoading(false)
       }
     }
 
-    loadUsers()
+    loadUsersAndBannedStatus()
   }, [])
 
   if (loading) {
@@ -48,6 +55,14 @@ const Users = () => {
         <p>{error}</p>
       </div>
     )
+  }
+
+  const refreshBannedUsers = async () => {
+    try {
+      const bannedIds = await fetchBannedUsers()
+      setBannedUsers(bannedIds)
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (error) { /* empty */ }
   }
 
   return (
@@ -71,8 +86,12 @@ const Users = () => {
           <UsersPrimaryButtons />
         </div>
 
-        <div className='-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-x-12 lg:space-y-0'>
-          <UsersTable data={userList} columns={columns} />
+        <div className='overflow-x-auto'>
+          <UsersTable
+            data={userList}
+            columns={getColumns(bannedUsers, refreshBannedUsers)}
+            bannedUsers={bannedUsers}
+          />
         </div>
       </Main>
 
