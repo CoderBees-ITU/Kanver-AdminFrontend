@@ -8,9 +8,7 @@ import {
   IconLayoutDashboard,
   IconLock,
   IconLockAccess,
-  IconMessages,
   IconNotification,
-  IconPackages,
   IconPalette,
   IconServerOff,
   IconSettings,
@@ -58,11 +56,6 @@ export const sidebarData: SidebarData = {
           title: 'Tasks',
           url: '/tasks',
           icon: IconChecklist,
-        },
-        {
-          title: 'Apps',
-          url: '/apps',
-          icon: IconPackages,
         },
         {
           title: 'Users',

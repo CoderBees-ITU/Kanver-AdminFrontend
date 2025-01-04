@@ -29,15 +29,18 @@ export const getColumns = (bannedUsers: string[], refreshBannedUsers: () => void
   {
     accessorKey: 'birthDate',
     header: 'Birth Date',
-    cell: (info) => new Date(info.getValue()).toLocaleDateString(), // Format date as MM/DD/YYYY
+    cell: (info) => {
+      const value = info.getValue() as string; // Cast to expected type
+      return new Date(value).toLocaleDateString(); // Format date as MM/DD/YYYY
+    },
   },
   {
     accessorKey: 'lastDonationDate',
     header: 'Last Donation Date',
-    cell: (info) =>
-      info.getValue()
-        ? new Date(info.getValue()).toLocaleDateString() // Format date if available
-        : 'Never Donated', // Fallback if null
+    cell: (info) => {
+      const value = info.getValue() as string | null; // Handle nullable cases
+      return value ? new Date(value).toLocaleDateString() : 'Never Donated';
+    },
   },
   {
     accessorKey: 'isEligible',
@@ -99,8 +102,8 @@ export const getColumns = (bannedUsers: string[], refreshBannedUsers: () => void
             const errorData = await response.json();
             alert(`Error: ${errorData.message}`);
           }
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (error) {
-          console.error('Error banning user:', error);
           alert('Failed to ban user. Please try again.');
         }
       };
@@ -119,8 +122,8 @@ export const getColumns = (bannedUsers: string[], refreshBannedUsers: () => void
             const errorData = await response.json();
             alert(`Error: ${errorData.message}`);
           }
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (error) {
-          console.error('Error unbanning user:', error);
           alert('Failed to unban user. Please try again.');
         }
       };
