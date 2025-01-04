@@ -1,39 +1,34 @@
-import React from "react";
-
-// Example donation data
-const donations = [
-  {
-    id: 1,
-    openedDate: "2025-01-01",
-    location: "New York",
-    requestee: "John Doe",
-    bloodType: "A+",
-  },
-  {
-    id: 2,
-    openedDate: "2025-01-02",
-    location: "Los Angeles",
-    requestee: "Jane Smith",
-    bloodType: "B-",
-  },
-  {
-    id: 3,
-    openedDate: "2025-01-03",
-    location: "Chicago",
-    requestee: "Alice Brown",
-    bloodType: "O+",
-  },
-];
+import { useEffect, useState } from 'react'
+import { BloodRequestService } from '@/services/request_service.ts';
 
 export function Overview() {
-  const handleEdit = (id) => {
-    console.log("Edit donation with ID:", id);
-    // Add edit logic here
+  const [donations, setDonations] = useState([]);
+
+  // Fetch donation data from the backend
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await BloodRequestService.getRequests({});
+        setDonations(response.data); // Assuming `data` is the array of donations
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      } catch (error) { /* empty */ }
+    }
+    fetchData();
+  }, []);
+
+  // Handle edit action
+  const handleEdit = (id: number) => {
   };
 
-  const handleDelete = (id) => {
-    console.log("Delete donation with ID:", id);
-    // Add delete logic here
+  // Handle delete action
+  const handleDelete = async (id: number) => {
+    try {
+      await BloodRequestService.deleteRequest(id.toString());
+      setDonations((prevDonations) =>
+        prevDonations.filter((donation) => donation.id !== id)
+      );
+    } catch (error) {
+    }
   };
 
   return (
@@ -49,7 +44,7 @@ export function Overview() {
         </tr>
         </thead>
         <tbody>
-        {donations.map((donation) => (
+        {donations.map((donation: any) => (
           <tr key={donation.id} className="hover:bg-gray-50">
             <td className="border border-gray-300 px-4 py-2">
               {donation.openedDate}
