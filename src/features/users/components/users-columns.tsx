@@ -1,6 +1,7 @@
-import { ColumnDef } from '@tanstack/react-table'
+import { ColumnDef } from '@tanstack/react-table';
 // import pino from 'pino'
-import { User } from '../data/schema'
+import { User } from '../data/schema';
+
 
 // const logger = pino()
 
@@ -75,7 +76,7 @@ export const getColumns = (bannedUsers: string[], refreshBannedUsers: () => void
           return;
         }
 
-        const ban_date = new Date().toISOString().split('T')[0]; // Formats as YYYY-MM-DD
+        const ban_date = new Date().toISOString().split('T')[0];
 
         try {
           const response = await fetch('https://kanver-backend-93774604105.us-central1.run.app/ban_user', {
@@ -84,7 +85,7 @@ export const getColumns = (bannedUsers: string[], refreshBannedUsers: () => void
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              tc_id: user.tcId.toString(),
+              tc_id: user.id.toString(),
               cause,
               unban_date,
               ban_date,
@@ -93,16 +94,47 @@ export const getColumns = (bannedUsers: string[], refreshBannedUsers: () => void
 
           if (response.ok) {
             alert('User banned successfully');
-            await refreshBannedUsers(); // Refresh banned users after a successful ban
+            await refreshBannedUsers();
           } else {
             const errorData = await response.json();
             alert(`Error: ${errorData.message}`);
           }
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (error) {
+          console.error('Error banning user:', error);
           alert('Failed to ban user. Please try again.');
         }
       };
+
+      const handleUnban = async () => {
+        try {
+          const response = await fetch(
+            `https://kanver-backend-93774604105.us-central1.run.app/unban_user/${user.tcId}`,
+            { method: 'DELETE' }
+          );
+
+          if (response.ok) {
+            alert('User unbanned successfully');
+            refreshBannedUsers()
+          } else {
+            const errorData = await response.json();
+            alert(`Error: ${errorData.message}`);
+          }
+        } catch (error) {
+          console.error('Error unbanning user:', error);
+          alert('Failed to unban user. Please try again.');
+        }
+      };
+
+      if (bannedUsers.includes(user.tcId.toString())) {
+        return (
+          <button
+            onClick={handleUnban}
+            className="bg-green-500 text-white py-1 px-3 rounded hover:bg-green-600"
+          >
+            Unban
+          </button>
+        );
+      }
 
       return (
         <button
