@@ -85,7 +85,7 @@ export const getColumns = (bannedUsers: string[], refreshBannedUsers: () => void
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              tc_id: user.id.toString(),
+              tc_id: user.tcId.toString(),
               cause,
               unban_date,
               ban_date,
