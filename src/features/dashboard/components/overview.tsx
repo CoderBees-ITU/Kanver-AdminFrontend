@@ -1,76 +1,54 @@
-import { useEffect, useState } from 'react'
-import { BloodRequestService } from '@/services/request_service.ts';
+import { useEffect, useState } from 'react';
+import { BloodRequestService } from '@/services/request_service';
 
 export function Overview() {
   const [donations, setDonations] = useState([]);
 
-  // Fetch donation data from the backend
   useEffect(() => {
-    async function fetchData() {
+    async function fetchRequests() {
       try {
-        const response = await BloodRequestService.getRequests({});
-        setDonations(response.data); // Assuming `data` is the array of donations
+        const data = await BloodRequestService.getRequests({});
+        setDonations(data); // Populate with fetched data
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error) { /* empty */ }
     }
-    fetchData();
+
+    fetchRequests();
   }, []);
-
-  // Handle edit action
-  const handleEdit = (id: number) => {
-  };
-
-  // Handle delete action
-  const handleDelete = async (id: number) => {
-    try {
-      await BloodRequestService.deleteRequest(id.toString());
-      setDonations((prevDonations) =>
-        prevDonations.filter((donation) => donation.id !== id)
-      );
-    } catch (error) {
-    }
-  };
 
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full border-collapse border border-gray-300">
         <thead className="bg-gray-100">
         <tr>
-          <th className="border border-gray-300 px-4 py-2">Opened Date</th>
+          <th className="border border-gray-300 px-4 py-2">Request Date</th>
           <th className="border border-gray-300 px-4 py-2">Location</th>
-          <th className="border border-gray-300 px-4 py-2">Requestee</th>
+          <th className="border border-gray-300 px-4 py-2">Patient</th>
           <th className="border border-gray-300 px-4 py-2">Blood Type</th>
-          <th className="border border-gray-300 px-4 py-2">Actions</th>
+          <th className="border border-gray-300 px-4 py-2">Status</th>
+          <th className="border border-gray-300 px-4 py-2">On The Way</th>
         </tr>
         </thead>
         <tbody>
         {donations.map((donation: any) => (
-          <tr key={donation.id} className="hover:bg-gray-50">
+          <tr key={donation.Request_ID} className="hover:bg-gray-50">
             <td className="border border-gray-300 px-4 py-2">
-              {donation.openedDate}
+              {donation.Create_Time}
             </td>
             <td className="border border-gray-300 px-4 py-2">
-              {donation.location}
+              {`${donation.City}, ${donation.District}`}
             </td>
             <td className="border border-gray-300 px-4 py-2">
-              {donation.requestee}
+              {`${donation.patient_name} ${donation.patient_surname}`}
             </td>
             <td className="border border-gray-300 px-4 py-2">
-              {donation.bloodType}
+              {donation.Blood_Type}
             </td>
             <td className="border border-gray-300 px-4 py-2">
-              <button
-                className="bg-blue-500 text-white px-2 py-1 rounded mr-2 hover:bg-blue-600"
-                onClick={() => handleEdit(donation.id)}
-              >
-                Edit
-              </button>
-              <button
-                className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
-                onClick={() => handleDelete(donation.id)}
-              >
-                Delete
-              </button>
+              {donation.Status}
+            </td>
+            <td className="border border-gray-300 px-4 py-2 text-center">
+              {donation.On_The_Way_Count}
             </td>
           </tr>
         ))}

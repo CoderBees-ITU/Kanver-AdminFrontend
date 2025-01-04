@@ -1,22 +1,20 @@
 import axios from 'axios';
 
+
 const BASE_URL = "https://kanver-backend-93774604105.us-central1.run.app";
 
 export const BloodRequestService = {
-  async getRequests(filters: { bloodType?: string; city?: string; district?: string }) {
-    const query = new URLSearchParams(filters).toString();
-    try {
-      const response = await axios.get(`${BASE_URL}/request/personalized?${query}`, {
+  getRequests: async (p: {}) => {
+    const response = await axios.get(
+      'https://kanver-backend-93774604105.us-central1.run.app/request',
+      {
         headers: {
+          Authorization: 'iJFXvfpDakVUQ6iYWp0OMJfJv5z2',
           'Content-Type': 'application/json',
-          'Authorization': 'user-auth-token',
         },
-      });
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching requests:", error);
-      throw error;
-    }
+      }
+    )
+    return response.data // Return the array of blood requests
   },
 
   async createRequest(requestData: any) {
@@ -24,13 +22,13 @@ export const BloodRequestService = {
       const response = await axios.post(`${BASE_URL}/request`, requestData, {
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'user-auth-token',
+          Authorization: 'user-auth-token',
         },
-      });
-      return response.data;
+      })
+      return response.data
     } catch (error) {
-      console.error("Error creating request:", error);
-      throw error;
+      console.error('Error creating request:', error)
+      throw error
     }
   },
 
@@ -38,13 +36,13 @@ export const BloodRequestService = {
     try {
       const response = await axios.delete(`${BASE_URL}/request/${requestId}`, {
         headers: {
-          'Authorization': 'user-auth-token',
+          Authorization: 'user-auth-token',
         },
-      });
-      return response.data;
+      })
+      return response.data
     } catch (error) {
-      console.error("Error deleting request:", error);
-      throw error;
+      console.error('Error deleting request:', error)
+      throw error
     }
   },
-};
+}
