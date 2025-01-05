@@ -6,7 +6,7 @@ export const userSchema = z.object({
   Blood_Type: z.string(),
   City: z.string().nullable(), // Allow null
   District: z.string().nullable(), // Allow null
-  Email: z.string().email(),
+  Email: z.string(),
   Is_Eligible: z.number().refine((val) => val === 1 || val === 0, {
     message: 'Is_Eligible must be 1 or 0',
   }).transform((val) => val === 1),
