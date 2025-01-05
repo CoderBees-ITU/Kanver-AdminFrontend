@@ -1,13 +1,15 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent } from '@/components/ui/tabs'
 import { Main } from '@/components/layout/main'
+import { DonationsThisMonth } from '@/features/dashboard/components/donationsThisMonth.tsx'
+import { TotalDonations } from '@/features/dashboard/components/totalDonations.tsx'
+import { UserCount } from '@/features/dashboard/components/userCount.tsx'
 import { Overview } from './components/overview'
 
 export default function Dashboard() {
   return (
     <>
       {/* ===== Top Heading ===== */}
-
 
       {/* ===== Main ===== */}
       <Main>
@@ -25,7 +27,7 @@ export default function Dashboard() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className='text-2xl font-bold'>239</div>
+                  <TotalDonations />
                 </CardContent>
               </Card>
               <Card>
@@ -35,7 +37,7 @@ export default function Dashboard() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className='text-2xl font-bold'>120</div>
+                  <UserCount />
                 </CardContent>
               </Card>
               <Card>
@@ -45,7 +47,7 @@ export default function Dashboard() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className='text-2xl font-bold'>8</div>
+                  <DonationsThisMonth />
                 </CardContent>
               </Card>
             </div>
